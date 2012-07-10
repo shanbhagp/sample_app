@@ -3,9 +3,9 @@
 
 <div class="row">
   <div class="span6 offset3">
-    <%= form_for(@user) do |f| %>
+    <%= form_for(@user) do |f| %>  <!-- at this point, I think @usuer is just a blank User.new hash, based on the Users controller definition for the 'new' action; I think MVC dictates when we say GET users/new that we perform the 'new' action defined at the Users controller, and then render the 'new' page as defined in the views -->
 
-      <%= render 'shared/error_messages' %>
+     <%= render 'shared/error_messages' %> 
       
       <%= f.label :name %>
       <%= f.text_field :name %>
@@ -20,6 +20,8 @@
       <%= f.password_field :password_confirmation %>
 
       <%= f.submit "Create my account", class: "btn btn-large btn-primary" %>
+       <!-- what I think is going on here:  Tells Rails to "POST to /users", which essentially means execute the 'create' action, which is (then further?) defined in the Users controller (further defined in the sense that tells the app what else to do, namely render one page if the (automatic save, automatic  b/c of POST request?) is successful, another page if not .  Does this also automatically save the user? -->
+
     <% end %>
   </div>
 </div>
