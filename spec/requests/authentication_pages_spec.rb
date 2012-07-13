@@ -78,20 +78,42 @@ describe "Authentication" do
 
       end #for in the users controller
 
+      describe "not having improper links" do
+        before {visit help_path}
+      it {should_not have_link ('Profile')}
+      it {should_not have_link ('Settings')}
+      end
+
         describe "when attempting to visit a protected page" do
-        before do
+         before do
           visit edit_user_path(user)
           fill_in "Email",    with: user.email
           fill_in "Password", with: user.password
           click_button "Sign in"
         end
 
+
         describe "after signing in" do
 
           it "should render the desired protected page" do
             page.should have_selector('title', text: 'Edit user')
           end
-        end 
+
+          describe "when signing in again" do
+            before do
+              visit signin_path
+              fill_in "Email",    with: user.email
+              fill_in "Password", with: user.password
+              click_button "Sign in"
+            end
+
+            it "should render the default (profile) page" do
+              page.should have_selector('title', text: user.name) 
+            end
+          end #signing in again
+
+
+        end #after signing in
       end # for visiting a protected page
 
 
@@ -124,6 +146,26 @@ describe "Authentication" do
         specify { response.should redirect_to(root_path) }        
       end
     end
+
+
+   describe "for signed in users" do
+      let(:user) { FactoryGirl.create(:user) }
+      before { sign_in user }
+      describe "attempting to access create action" do
+        before {post users_path}
+        specify {response.should redirect_to (root_path)}
+      end
+    end
+
+    describe "as admin user" do
+      let (:admin_dude) {FactoryGirl.create(:user)}
+      before { admin_dude.toggle!(:admin) }
+      before {sign_in admin_dude}
+      describe "deleting self"do
+        before {delete user_path(admin_dude)}
+        specify { response.should redirect_to(root_path) }  
+      end
+    end 
 
   end #end authorization
 
