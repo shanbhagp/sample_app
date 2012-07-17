@@ -28,6 +28,8 @@ class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation 
   has_secure_password
 
+  has_many :microposts, dependent: :destroy
+
  before_save { self.email.downcase! }
 # #same as# before_save { |user| user.email = email.downcase }
 before_save :create_remember_token
@@ -42,6 +44,13 @@ before_save :create_remember_token
   validates :password, length: { minimum: 6 }
   validates :password_confirmation, presence: true
 
+
+def feed
+     #This is preliminary. See "Following users" for the full implementation.
+  Micropost.where("user_id = ?", id)
+end
+# this says if you take the 'feed' method on a user, retrn all microposts (an array) where...
+#this allows stuff like current_user.feed
 
     private
 

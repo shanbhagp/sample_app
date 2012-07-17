@@ -1,0 +1,21 @@
+<li id="<%= feed_item.id %>">
+  <%= link_to gravatar_for(feed_item.user), feed_item.user %>
+  <!-- how does feed_item.user work again? every micropost has an associated user, so i guess it's through the belongs_to relation-->
+  <span class="user">
+    <%= link_to feed_item.user.name, feed_item.user %>
+    <!-- feed_item.user is the path - the user is a URI b/c it infers the user_path part of user_path(user) -->
+  </span>
+  <span class="content"><%= feed_item.content %></span>
+  <span class="timestamp">
+    Posted <%= time_ago_in_words(feed_item.created_at) %> ago.
+  </span>
+
+<% if current_user?(feed_item.user) %>
+    <%= link_to "delete", micropost_path(feed_item), method: :delete,
+                                     data: { confirm: "You sure?" },
+                                     title: feed_item.content %>
+    <!-- we can also use ...'feed_item' instead of 'micropost_path(feed_item)'' -->
+  <% end %>
+
+
+</li>

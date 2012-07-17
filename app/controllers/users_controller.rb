@@ -6,6 +6,8 @@ before_filter :admin_user,     only: :destroy
 
  def show
     @user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
+    # pagination replacement for @microposts = @user.microposts.all  (see analog in show index below)
   end
 
  # def new
@@ -43,7 +45,7 @@ def create
   if signed_in?
     redirect_to root_path
   else
-    @user = User.new(params[:user])
+    @user = User.new(params[:user])  #what is this really doing?
     if @user.save  #???this is what saves the user upon clicking the submit button (in the
       # 'new' page and thereby submitting a post request (executing the create action)
       # - that is, @user.save is a command? which if successful returns true?  or is 
@@ -101,13 +103,14 @@ end
 
 private
 
+=begin 
    def signed_in_user
       unless signed_in?
         store_location
         redirect_to signin_path, notice: "Please sign in."
       end
     end
-
+=end #removed bc code moved to sessions helper. Is code in any helper available to all controllers?
     def correct_user
       @user = User.find(params[:id])
       redirect_to(root_path) unless current_user?(@user)
