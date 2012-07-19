@@ -1,0 +1,4 @@
+    <%= link_to "delete", micropost_path(feed_item), method: :delete,
+                                     data: { confirm: "You sure?" },
+                                     title: feed_item.content %>
+    <!-- we can also use ...'feed_item' instead of 'micropost_path(feed_item)'' -->

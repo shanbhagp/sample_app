@@ -97,7 +97,20 @@ describe User do
   it { should respond_to(:password_confirmation) }
   it { should respond_to(:authenticate) }
 
-  it { should respond_to (:microposts)}
+  it { should respond_to (:microposts)} #response ensured by the 'has many microposts'
+                                        # association in the user model
+
+  it { should respond_to(:relationships) }
+  it { should respond_to(:followed_users) } #response is an array of those the user follows 
+                                            #response ensured by 'has many followed users through..'
+                                            # association in the user model
+  it { should respond_to(:following?) } # response is true or false
+  it { should respond_to(:follow!) } # response is success or an exception?
+  it { should respond_to(:unfollow!) }
+  it { should respond_to(:reverse_relationships) }
+  it {should respond_to(:followers)} #returns an array of the those following the user
+                                     #response ensured by 'has many followers through..'
+                                    # association in the user model
 
   it { should be_valid }
   it { should respond_to(:remember_token) }
@@ -225,7 +238,7 @@ describe "with a password that's too short" do
 
 describe "micropost associations" do
 
-    before { @user.save } #why do we need to save this @user first?
+    before { @user.save } #why do we need to save this @user first? To allow the subseqent micropost creation?
     let!(:older_micropost) do  #what are the args let can take? {}, do-end, =
       FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
     end
@@ -253,14 +266,55 @@ describe "micropost associations" do
           FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
           # creates micrcpost for someone who is not @user
         end
+        let(:followed_user) { FactoryGirl.create(:user) }
+
+            before do
+                  @user.follow!(followed_user)
+                  3.times { followed_user.microposts.create!(content: "Lorem ipsum") }
+                end
 
           its(:feed) { should include(newer_micropost) }
+          # note that this language reflects taking the feed method on a user, and returning an array (of microposts)
+          # i.e., it follows the feed method as defined in the User model
           its(:feed) { should include(older_micropost) }
           its(:feed) { should_not include(unfollowed_post) }
-       end
+
+          its(:feed) do
+                followed_user.microposts.each do |micropost|
+                should include(micropost)
+                                              end
+                   end
+
+       end #status
      
 
   end #micropost associations
 
 
-end 
+describe "following" do
+    let(:other_user) { FactoryGirl.create(:user) }    
+    before do
+      @user.save  #why do we need this save here?
+      @user.follow!(other_user)
+    end
+
+    it { should be_following(other_user) }
+    its(:followed_users) { should include(other_user) }
+
+    describe "followed user" do
+      subject { other_user }
+      its(:followers) { should include(@user) }
+    end
+  
+  describe "and unfollowing" do
+      before { @user.unfollow!(other_user) }
+
+      it { should_not be_following(other_user) }
+      its(:followed_users) { should_not include(other_user) }
+    end
+
+  end #following
+
+
+
+end  #User

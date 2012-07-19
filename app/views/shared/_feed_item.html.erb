@@ -5,7 +5,7 @@
     <%= link_to feed_item.user.name, feed_item.user %>
     <!-- feed_item.user is the path - the user is a URI b/c it infers the user_path part of user_path(user) -->
   </span>
-  <span class="content"><%= feed_item.content %></span>
+  <span class="content"><%= wrap(feed_item.content) %></span>
   <span class="timestamp">
     Posted <%= time_ago_in_words(feed_item.created_at) %> ago.
   </span>
@@ -15,6 +15,7 @@
                                      data: { confirm: "You sure?" },
                                      title: feed_item.content %>
     <!-- we can also use ...'feed_item' instead of 'micropost_path(feed_item)'' -->
+
   <% end %>
 
 

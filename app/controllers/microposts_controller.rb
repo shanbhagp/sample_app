@@ -21,6 +21,9 @@ class MicropostsController < ApplicationController
       # simply go through the home action in the Static pages controller and render the homepage withouth the 
       # benefit of any error message being passed (I guess it's lost upon executing a fresh action (the home action in SPC)) 
       # (and the @feed_items instance variable is re-set)
+      # i think hitting a fresh action means losing the @x instance var; otherwise, a var 
+      #cascades through render commands (e.g., for the home page -> partials -> user info and 
+      # micropost partial)
     end
   end
 

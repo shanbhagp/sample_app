@@ -9,7 +9,9 @@ module SessionsHelper
   def current_user=(user)
     @current_user = user
   end
-
+  #this is to define the method of setting a current_user used in the def below (for current_user)
+  # and the def above?
+  
   def current_user
     @current_user ||= User.find_by_remember_token(cookies[:remember_token])
   end 
